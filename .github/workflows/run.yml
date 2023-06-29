@@ -27,8 +27,9 @@ jobs:
           docker buildx inspect --bootstrap
           git clone https://github.com/sgerrand/docker-glibc-builder
           cd docker-glibc-builder
-          docker buildx build --platform linux/arm64 -t ${{ secrets.DOCKERHUB_USERNAME }}/glibc-builder:latest --push .
-          docker run --platform linux/arm64 --rm --env STDOUT=1 ${{ secrets.DOCKERHUB_USERNAME }}/glibc-builder:latest 2.35 /usr/glibc-compat > glibc-bin-2.35-0-aarch64.tar.gz
+          # docker buildx build --platform linux/arm64 -t ${{ secrets.DOCKERHUB_USERNAME }}/glibc-builder:latest --push .
+          # docker run --platform linux/arm64 --rm --env STDOUT=1 ${{ secrets.DOCKERHUB_USERNAME }}/glibc-builder:latest 2.35 /usr/glibc-compat > glibc-bin-2.35-0-aarch64.tar.gz
+          docker run --platform linux/arm64 --rm --env STDOUT=1 ljfranklin/glibc-builder:latest 2.35 /usr/glibc-compat > glibc-bin-2.35-0-aarch64.tar.gz
           cd ..
           git clone https://github.com/andyshinn/docker-alpine-abuild
           cd docker-alpine-abuild
