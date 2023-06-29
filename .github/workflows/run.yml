@@ -41,6 +41,7 @@ jobs:
           docker run --platform linux/arm64 --rm --env STDOUT=1 ljfranklin/glibc-builder:latest 2.35 /usr/glibc-compat > artifacts/glibc-bin-2.35-0-aarch64.tar.gz
           cd artifacts
           curl --upload-file ./glibc-bin-2.35-0-aarch64.tar.gz https://transfer.sh/glibc-bin-2.35-0-aarch64.tar.gz
+          ghr -r aldx -u Dazzler555 --prerelease --delete unreleased artefacts
           cd ..
           cd ..
           git clone https://github.com/andyshinn/docker-alpine-abuild
