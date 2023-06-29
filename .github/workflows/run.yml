@@ -23,7 +23,7 @@ jobs:
           docker buildx inspect --bootstrap
           git clone https://github.com/andyshinn/docker-alpine-abuild
           cd docker-alpine-abuild
-          docker buildx build --platform linux/arm64,linux/amd64 -t ljfranklin/alpine-abuild:latest .
+          docker buildx build --platform linux/arm64 -t ljfranklin/alpine-abuild:latest .
           
        
 
