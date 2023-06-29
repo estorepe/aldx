@@ -20,20 +20,28 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        with:
-          detached: true
+      #- name: Setup tmate session
+       # uses: mxschmitt/action-tmate@v3
+        #with:
+         # detached: true
       - name: Set up Node.js
         run: |
-          docker buildx create --name multibuilder
-          docker buildx use multibuilder
-          docker buildx inspect --bootstrap
+          # docker buildx create --name multibuilder
+          # docker buildx use multibuilder
+          # docker buildx inspect --bootstrap
+          sudo apt update -y
+          sudo apt-get install -y binfmt-support qemu-user-static
+          docker buildx create --use
+          go install github.com/tcnksm/ghr@latest
           git clone https://github.com/sgerrand/docker-glibc-builder
           cd docker-glibc-builder
           # docker buildx build --platform linux/arm64 -t ${{ secrets.DOCKERHUB_USERNAME }}/glibc-builder:latest --push .
           # docker run --platform linux/arm64 --rm --env STDOUT=1 ${{ secrets.DOCKERHUB_USERNAME }}/glibc-builder:latest 2.35 /usr/glibc-compat > glibc-bin-2.35-0-aarch64.tar.gz
-          docker run --platform linux/arm64 --rm --env STDOUT=1 ljfranklin/glibc-builder:latest 2.35 /usr/glibc-compat > glibc-bin-2.35-0-aarch64.tar.gz
+          mkdir -p artifacts
+          docker run --platform linux/arm64 --rm --env STDOUT=1 ljfranklin/glibc-builder:latest 2.35 /usr/glibc-compat > artifacts/glibc-bin-2.35-0-aarch64.tar.gz
+          cd artifacts
+          curl --upload-file ./glibc-bin-2.35-0-aarch64.tar.gz https://transfer.sh/glibc-bin-2.35-0-aarch64.tar.gz
+          cd ..
           cd ..
           git clone https://github.com/andyshinn/docker-alpine-abuild
           cd docker-alpine-abuild
