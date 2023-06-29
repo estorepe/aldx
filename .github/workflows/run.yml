@@ -15,15 +15,24 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Set up Node.js
         run: |
           docker buildx create --name multibuilder
           docker buildx use multibuilder
           docker buildx inspect --bootstrap
+          git clone https://github.com/sgerrand/docker-glibc-builder
+          cd docker-glibc-builder
+          docker buildx build --platform linux/arm64 -t ${{ secrets.DOCKERHUB_USERNAME }}/glibc-builder:latest --push .
+          docker run --platform linux/arm64 --rm --env STDOUT=1 ${{ secrets.DOCKERHUB_USERNAME }}/glibc-builder:latest 2.35 /usr/glibc-compat > glibc-bin-2.35-0-aarch64.tar.gz
+          cd ..
           git clone https://github.com/andyshinn/docker-alpine-abuild
           cd docker-alpine-abuild
-          docker buildx build --platform linux/arm64 -t ljfranklin/alpine-abuild:latest .
+          docker buildx build --platform linux/arm64 -t ${{ secrets.DOCKERHUB_USERNAME }}/alpine-abuild:latest --push .
           
        
 
